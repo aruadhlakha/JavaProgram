@@ -1,0 +1,459 @@
+//////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
+//
+// Title: Library
+// Files: Library.java
+// Course: 300, Spring 2019
+//
+// Author: Aryan Adhlakha   
+// Email: aadhlakha@wisc.edu
+// Lecturer's Name: Gary Dahl
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ///////////////////
+//
+// Partner Name: Nikhilesh Subramanian
+// Partner Email: venkata2@wisc.edu 
+// Partner Lecturer's Name: Mouna Kacm
+//
+// VERIFY THE FOLLOWING BY PLACING AN X NEXT TO EACH TRUE STATEMENT:
+// X Write-up states that pair programming is allowed for this assignment.
+// X We have both read and understand the course Pair Programming Policy.
+// X We have registered our team prior to the team registration deadline.
+//
+///////////////////////////// CREDIT OUTSIDE HELP /////////////////////////////
+//
+// Students who get help from sources other than their partner must fully
+// acknowledge and credit those sources of help here. Instructors and TAs do
+// not need to be credited here, but tutors, friends, relatives, room mates,
+// strangers, and others do. If you received no outside help from either type
+// of source, then please explicitly indicate NONE.
+//
+// Persons: None
+// Online Sources: (identify each URL and describe their assistance in detail)
+//
+/////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
+/**
+ * @author Nikhilesh Venkatasubramanian Test class for all the other classes
+ * 
+ *         This class models a simple book library. The main method of this class implements the
+ *         management system for this library.
+ */
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Library {
+
+  // instance fields
+  private String address; // Street address of this library
+  private Librarian librarian; // this library's librarian. This library must have only ONE
+                               // librarian
+  private ArrayList<Book> books; // list of the books in this library
+  private ArrayList<Subscriber> subscribers; // list of this library's subscribers
+
+  /**
+   * Creates a new Library and initializes all its instance fields. Initially both books and
+   * subscribers lists are empty.
+   * 
+   * @param address           - Address of this Library
+   * @param librarianUsername - username of the librarian of this book library
+   * @param librarianLogin    - password of the librarian of this book library
+   */
+  public Library(String address, String librarianUsername, String librarianLogin) {
+    this.address = address;
+    librarian = new Librarian(librarianUsername, librarianLogin);
+    books = new ArrayList<Book>();
+    subscribers = new ArrayList<Subscriber>();
+
+  }
+
+  /**
+   * Adds a new book to the library (to the books list). T"
+   * 
+   * @param title  - title of the new book
+   * @param author - author of the new book
+   */
+  public void addBook(String title, String author) {
+    Book book = new Book(title, author);// Creating the new book to be added to the library list
+    books.add(book);
+    System.out.println("Book with Title " + title + " is successfully added to the library.");
+  }
+
+  /**
+   * Adds a new subscriber to this library (to subscribers list).
+   * 
+   * @param             name- name of the new subscriber
+   * @param pin         - 4-digit personal identifier number of the new subscriber
+   * @param             address- address of the new subscriber
+   * @param phoneNumber - phone number of the new subscriber
+   */
+  public void addSubscriber(String name, int pin, String address, String phoneNumber) {
+    Subscriber subscriber = new Subscriber(name, pin, address, phoneNumber);
+    subscribers.add(subscriber);
+    System.out.println("Library card with bar code " + subscriber.getCARD_BAR_CODE()
+        + " is successfully issued to the new subscriber " + name + ".");
+  }
+
+  /**
+   * Displays a list of books
+   * 
+   * @param books ArrayList of books
+   */
+  public static void displayBooks(ArrayList<Book> books) {
+    // Traverse the list of books and display book id, title, author, and availability of each book
+      if (books.size()==0) {
+          System.out.println("There are no books here.");
+      }
+    for (int i = 0; i < books.size(); i++) {
+      System.out.print("<Book ID>: " + books.get(i).getID() + " ");
+      System.out.print("<Title>: " + books.get(i).getTitle() + " ");
+      System.out.print("<Author>: " + books.get(i).getAuthor() + " ");
+      System.out.println("<Is Available>: " + books.get(i).isAvailable());
+    }
+  }
+
+  /**
+   * Returns a Book given a book identifier if found, and null otherwise.
+   * 
+   * @param bookId - identifier of the book to find
+   * @return reference to the Book if found and null otherwise
+   */
+  public Book findBook(int bookId) {
+    boolean check = false;// true when book is found
+    int loopCount = 0;// to note th eindex of the book found
+    for (int i = 0; i < books.size(); i++) {
+      if (books.get(i).getID() == bookId)// when book is found
+      {
+        check = true;
+        loopCount = i;
+        break;
+      }
+
+    }
+    if (check)
+      return books.get(loopCount);// corresponding book reference
+    else {
+      System.out.println("Error: this book identifier didn't match any of our books identifiers.");
+      return null;
+    }
+  }
+
+  /**
+   * Returns the list of books having a given author.
+   * 
+   * @param author - author of the book(s) to find
+   * @return ArrayList of the books having a given author (0 or more books can be found)
+   */
+  public ArrayList<Book> findBookByAuthor(String author) {
+    ArrayList<Book> authorBooks = new ArrayList<Book>();
+    for (int i = 0; i < books.size(); i++) {
+      if (books.get(i).getAuthor().equalsIgnoreCase(author))
+        authorBooks.add(books.get(i));
+    }
+
+    return authorBooks;
+  }
+
+  /**
+   * Returns the list of books having a given title in this library
+   * 
+   * @param title- title of the book(s) to find
+   * 
+   * @return ArrayList of the books having a given title in this library (0 or more books can be
+   *         found)
+   */
+  public ArrayList<Book> findBookByTitle(java.lang.String title) {
+    ArrayList<Book> titleBooks = new ArrayList<Book>();
+    for (int i = 0; i < books.size(); i++) {
+      if (books.get(i).getTitle().equalsIgnoreCase(title))
+        titleBooks.add(books.get(i));
+    }
+
+    return titleBooks;
+
+  }
+
+  /**
+   * Finds a subscriber given its cardBarCode.
+   * 
+   * @param cardBarCode - - of the subscriber to find
+   * @return a reference to the subscriber if found, otherwise null
+   */
+  public Subscriber findSubscriber(int cardBarCode) {
+    boolean check = false;// true when book is found
+    int loopCount = 0;// to note the index of the book found
+    for (int i = 0; i < subscribers.size(); i++) {
+      if (subscribers.get(i).getCARD_BAR_CODE() == cardBarCode)// when subscriber is found
+      {
+        check = true;
+        loopCount = i;
+        break;
+      }
+
+    }
+    if (check)
+      return subscribers.get(loopCount);// corresponding book reference
+    else {
+      System.out.println("Error: this card bar code didn't match any of our records.");
+      return null;
+    }
+  }
+
+  /**
+   * @return the address of this library
+   */
+  public java.lang.String getAddress() {
+    return address;
+  }
+
+  /**
+   * @return the librarian of this library
+   */
+  public Librarian getLibrarian() {
+    return this.librarian;
+  }
+
+  /**
+   * Reads and processes the user commands with respect to the menu of this application
+   * 
+   * @param scanner Scanner object used to read the user command lines
+   */
+  public void readProcessUserCommand(Scanner scanner) {
+    final String promptCommandLine = "ENTER COMMAND: ";
+    displayMainMenu(); // display the library management system main menu
+    System.out.print(promptCommandLine);
+    String command = scanner.nextLine(); // read user command line
+    String[] commands = command.trim().split(" "); // split user command
+    while (commands[0].trim().charAt(0) != '3') { // '3': Exit the application
+      switch (commands[0].trim().charAt(0)) {
+        case '1': // login as librarian commands[1]: password
+          if (this.librarian.checkPassword(commands[1])) {
+            // read and process librarian commands
+            readProcessLibrarianCommand(scanner);
+          } else { // error password
+            System.out.println("Error: Password incorrect!");
+          }
+          break;
+        case '2': // login as subscriber commands[1]: card bar code
+          Subscriber subscriber = this.findSubscriber(Integer.parseInt(commands[1]));
+          if (subscriber != null) {
+            if (subscriber.getPin() == Integer.parseInt(commands[2])) // correct PIN
+              // read and process subscriber commands
+              readProcessSubscriberCommand(subscriber, scanner);
+            else
+              System.out.println("Error: Incorrect PIN.");
+          }
+          break;
+      }
+      // read and split next user command line
+      displayMainMenu(); // display the library management system main menu
+      System.out.print(promptCommandLine);
+      command = scanner.nextLine(); // read user command line
+      commands = command.trim().split(" "); // split user command line
+    }
+  }
+
+  /**
+   * @param scanner Reads and processes the librarian commands according to the librarian menu
+   */
+  public void readProcessLibrarianCommand(java.util.Scanner scanner) {
+    displayLibrarianMenu();
+    System.out.print("ENTER COMMAND: ");
+    String libCommand = scanner.nextLine(); // read librarian command line
+    String[] libCommands = libCommand.trim().split(" "); // split librarian command
+    while (libCommands[0].trim().charAt(0) != '9') { // '9': :Logout command
+      switch (libCommands[0].trim().charAt(0)) {
+        
+        case '1':
+          addBook(libCommands[1].trim(), libCommands[2].trim());
+          break;
+        
+        case '2': // add new subscriber with given details
+
+          addSubscriber(libCommands[1].trim(), Integer.parseInt(libCommands[2].trim()),
+              libCommands[3].trim(), libCommands[4].trim());
+          break;
+       
+        case '3': 
+          findSubscriber(Integer.parseInt(libCommands[1].trim()))
+              .checkoutBook(findBook(Integer.parseInt(libCommands[2].trim())));// Finding the
+                                                                            // subscriber, finding
+                                                                            // the book and checking
+                                                                            // out
+          break;
+        
+
+        case '4': 
+          findSubscriber(Integer.parseInt(libCommands[1].trim()))
+              .returnBook((findBook(Integer.parseInt(libCommands[2].trim()))));;// Finding the
+                                                                             // subscriber, finding
+                                                                             // the book and then
+                                                                             // returning it
+
+          break;
+        
+
+
+        case '5':
+          findSubscriber(Integer.parseInt(libCommands[1].trim())).displayPersonalInfo();
+          
+          break;
+        
+        case '6':
+          findSubscriber(Integer.parseInt(libCommands[1].trim())).displayBooksCheckedOut();
+          
+          break;
+        
+        case '7':
+          displayBooks(books);
+          break;
+        
+        case '8':
+          books.remove(findBook(Integer.parseInt(libCommands[1].trim())));
+          break;
+      }
+      // read and split next user command line
+      displayLibrarianMenu(); // display the library management system main menu
+      System.out.print("ENTER COMMAND: ");
+      libCommand = scanner.nextLine(); // read user command line
+      libCommands = libCommand.trim().split(" "); // split user command line
+    }
+
+  }
+
+  /**
+   * Reads and processes the subscriber commands according to the subscriber menu
+   * 
+   * @param subscriber - Current logged in subscriber
+   * @param scanner    - Scanner object used to read the librarian command lines
+   */
+  public void readProcessSubscriberCommand(Subscriber subscriber, Scanner scanner) {
+  displaySubscriberMenu();
+  System.out.print("ENTER COMMAND: ");
+  String userCommand = scanner.nextLine(); // Read the user command
+  String userCommands[] = userCommand.trim().split(" "); // Split the user's command
+  while(userCommands[0].trim().charAt(0)!='9') //Logout command = 9
+  {
+    switch(userCommands[0].trim().charAt(0))
+    {
+      case '1' :
+        subscriber.checkoutBook(findBook(Integer.parseInt(userCommands[1].trim())));
+        break;
+        
+      case '2':
+        subscriber.returnBook(findBook(Integer.parseInt(userCommands[1].trim())));
+        break;
+        
+      case '3':
+        
+        displayBooks(findBookByTitle(userCommands[1].trim()));
+        break;
+        
+      case '4':
+       displayBooks(findBookByAuthor(userCommands[1].trim()));
+        break;
+        
+      case '5':
+        subscriber.displayBooksCheckedOut();
+        break;
+        
+      case '6':
+        subscriber.displayHistoryBooksReturned();
+        break;
+        
+      case '7':
+        subscriber.setAddress(userCommands[1].trim());
+        break;
+        
+      case '8':
+       subscriber.setPhoneNumber(userCommands[1].trim());
+       break; 
+    }
+    //read and split next user command line
+    displaySubscriberMenu();
+    System.out.print("ENTER COMMAND: ");
+    userCommand = scanner.nextLine();
+    userCommands = userCommand.trim().split(" ");
+  }
+  
+  }
+
+  /**
+   * Displays the main menu for this book library application
+   */
+  private static void displayMainMenu() {
+    System.out.println("\n--------------------------------------------------------");
+    System.out.println("     Welcome to our Book Library Management System");
+    System.out.println("--------------------------------------------------------");
+    System.out.println("Enter one of the following options:");
+    System.out.println("[1 <password>] Login as a librarian");
+    System.out.println("[2 <card bar code> <4-digits pin>] Login as a Subscriber");
+    System.out.println("[3] Exit"); // Exit the application
+    System.out.println("--------------------------------------------------------");
+  }
+
+  /**
+   * Displays the menu for a Subscriber
+   */
+  private static void displaySubscriberMenu() {
+    System.out.println("\n--------------------------------------------------------");
+    System.out.println("    Welcome to Subscriber's Space");
+    System.out.println("--------------------------------------------------------");
+    System.out.println("Enter one of the following options:");
+    System.out.println("[1 <book ID>] Check out a book");
+    System.out.println("[2 <book ID>] Return a book");
+    System.out.println("[3 <title>] Search a Book by title");
+    System.out.println("[4 <author>] Search a Book by author");
+    System.out.println("[5] Print list of books checked out");
+    System.out.println("[6] Print history of returned books");
+    System.out.println("[7 <address>] Update address");
+    System.out.println("[8 <phone number>] Update phone number");
+    System.out.println("[9] Logout");
+    System.out.println("--------------------------------------------------------");
+  }
+
+  /**
+   * Displays the menu for the Librarian
+   */
+  private static void displayLibrarianMenu() {
+    System.out.println("\n--------------------------------------------------------");
+    System.out.println("    Welcome to Librarian's Space");
+    System.out.println("--------------------------------------------------------");
+    System.out.println("Enter one of the following options:");
+    System.out.println("[1 <title> <author>] Add new Book");
+    System.out.println("[2 <name> <pin> <address> <phone number>] Add new subscriber");
+    System.out.println("[3 <card bar code> <book ID>] Check out a Book");
+    System.out.println("[4 <card bar code> <book ID>] Return a Book for a subscriber");
+    System.out.println("[5 <card bar code>] Display Personal Info of a Subscriber");
+    System.out.println("[6 <card bar code>] Display Books Checked out by a Subscriber");
+    System.out.println("[7] Display All Books");
+    System.out.println("[8 <book ID>] Remove a Book");
+    System.out.println("[9] Logout");
+    System.out.println("--------------------------------------------------------");
+  }
+
+  /**
+   * Display the Application GoodBye and logout message.
+   */
+  private static void displayGoodByeLogoutMessage() {
+    System.out.println("\n--------------------------------------------------------");
+    System.out.println("       Thanks for Using our Book Library App!!!!");
+    System.out.println("--------------------------------------------------------");
+  }
+
+  /**
+   * Main method that represents the driver for this application
+   * 
+   * @param args
+   */
+  public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in); // create a scanner object to read user inputs
+    // create a new library object
+    Library madisonLibrary = new Library("Madison, WI", "april", "abc");
+    // read and process user command lines
+    madisonLibrary.readProcessUserCommand(scanner);
+    displayGoodByeLogoutMessage(); // display good bye message
+    scanner.close();// close this scanner
+  }
+
+
+
+}
